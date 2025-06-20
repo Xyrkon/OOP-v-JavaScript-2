@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <button class="btn btn-success" id="openForm">Přidat knihu</button>
+
+    <div class="bookFormMain" id="bookFormMain">
+
+        <div style="background:#fff; padding:20px; border-radius:10px; width:300px;">
+            <h3>Kontaktní formulář</h3>
+            <form id="contactForm">
+                <label>Název:</label><br>
+                <input class="formInput" type="text" id="title" name="title" required><br><br>
+
+                <div id="dropzone">Přetáhni sem PDF soubor</div>
+                <a id="pdf-link" href="#" target="_blank" style="display:none;"></a>
+
+                <label>Cena:</label><br>
+                <input class="formInput" type="date" id="year" name="" required><br><br>
+
+                <div class="form-check">
+                    <h5>Je tato kniha dostupná?</h5>
+                    <input class="form-check-input" type="radio" name="radioDefault" id="radioDefault1" checked>
+                    <label class="form-check-label" for="radioDefault1">
+                        Ano
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="radioDefault" id="radioDefault2" checked>
+                    <label class="form-check-label" for="radioDefault2">
+                        Ne
+                    </label>
+                </div>
+
+                <button class="btn btn-success" id="addBook" type="button">Přidat</button>
+                <button class="btn btn-primary" type="button" id="closeForm">Zavřít</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="cardContainer" id="cardContainer">
+
+    </div>
+
+
+    <script src="book.js"></script>
+    <script src="library.js"></script>
+    <script>
+        Library.initModal();
+
+    </script>
+</body>
+
+</html>

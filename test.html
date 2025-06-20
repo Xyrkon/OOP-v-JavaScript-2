@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Drag & Drop PDF</title>
+    <style>
+        #dropzone {
+            border: 2px dashed #888;
+            padding: 40px;
+            text-align: center;
+            color: #444;
+            border-radius: 10px;
+            font-family: sans-serif;
+            transition: background-color 0.3s;
+            margin: 20px;
+        }
+
+        #dropzone.hover {
+            background-color: #eef;
+        }
+
+        #pdf-link {
+            margin-top: 20px;
+            display: block;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="dropzone">Přetáhni sem PDF soubor</div>
+    <a id="pdf-link" href="#" target="_blank" style="display:none;"></a>
+
+    <script>
+        const dropzone = document.getElementById('dropzone');
+        const pdfLink = document.getElementById('pdf-link');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(event => {
+            dropzone.addEventListener(event, e => e.preventDefault());
+        });
+
+        ['dragenter', 'dragover'].forEach(() => {
+            dropzone.classList.add('hover');
+        });
+
+        ['dragleave', 'drop'].forEach(() => {
+            dropzone.classList.remove('hover');
+        });
+
+        dropzone.addEventListener('drop', e => {
+            const file = e.dataTransfer.files[0];
+
+            if (file && file.type === 'application/pdf') {
+                const fileURL = URL.createObjectURL(file);
+
+                pdfLink.href = fileURL;
+                pdfLink.textContent = `📄 Otevřít knihu`;
+                pdfLink.style.display = 'block';
+            } else {
+                pdfLink.style.display = 'none';
+                alert('Prosím přetáhni pouze PDF soubor.');
+            }
+        });
+    </script>
+
+</body>
+
+</html>
