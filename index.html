@@ -16,36 +16,39 @@
 <body>
     <button class="btn btn-success" id="openForm">Přidat knihu</button>
 
+    <div class="mt-3 mb-3">
+        <input type="text" id="searchInput" class="searchBar form-control"
+            placeholder="Hledat podle názvu nebo autora...">
+    </div>
     <div class="bookFormMain" id="bookFormMain">
 
         <div style="background:#fff; padding:20px; border-radius:10px; width:300px;">
-            <h3>Kontaktní formulář</h3>
+            <h3>Formulář pro přidání knihy</h3>
             <form id="contactForm">
-                <label>Název:</label><br>
+                <label>Název knihy:</label><br>
                 <input class="formInput" type="text" id="title" name="title" required><br><br>
+
+                <label>jméno autora:</label><br>
+                <input class="formInput" type="text" id="author" name="author" required><br><br>
 
                 <div id="dropzone">Přetáhni sem PDF soubor</div>
                 <a id="pdf-link" href="#" target="_blank" style="display:none;"></a>
 
-                <label>Cena:</label><br>
+                <label class="mt-4">Datum vydání knihy:</label><br>
                 <input class="formInput" type="date" id="year" name="" required><br><br>
 
-                <div class="form-check">
+                <div class="mt-2 form-check">
                     <h5>Je tato kniha dostupná?</h5>
-                    <input class="form-check-input" type="radio" name="radioDefault" id="radioDefault1" checked>
-                    <label class="form-check-label" for="radioDefault1">
+                    <input class="form-check-input" type="checkbox" name="available" id="isAvailable">
+                    <label class="form-check-label" for="available">
                         Ano
                     </label>
                 </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="radioDefault" id="radioDefault2" checked>
-                    <label class="form-check-label" for="radioDefault2">
-                        Ne
-                    </label>
-                </div>
+
 
                 <button class="btn btn-success" id="addBook" type="button">Přidat</button>
                 <button class="btn btn-primary" type="button" id="closeForm">Zavřít</button>
+                <button class="btn btn-secondary mt-2" type="button" id="resetForm">Resetovat formulář</button>
             </form>
         </div>
     </div>
@@ -59,7 +62,7 @@
     <script src="library.js"></script>
     <script>
         Library.initModal();
-
+        Library.enableSearch();
     </script>
 </body>
 

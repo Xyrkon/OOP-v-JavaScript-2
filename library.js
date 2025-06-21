@@ -3,18 +3,115 @@ class Library {
         this.books = [];
     }
 
-    addBook(book) {
-        this.books.push(book);
+    //zakladni init promennych
+    static books = [];
+    static bookInstances = {};
+
+    /**
+     * Funkce pro přidání nové knihy do knihovny
+     * @param {Book} book - kniha kterou chceme přidat
+     */
+    static addBook(book) {
+        Library.books.push(book); //přidá knihu1
+
+        // Uloží instanci knihy do globálního objektu pro snadný přístup
+        const safeKey = book.title.trim();
+        window.bookInstances = window.bookInstances || {};
+        window.bookInstances[safeKey] = book;
+
+        //přerenderuje karty knih
+        Library.renderBookCards();
     }
 
-    removeBook(title) {
-        this.books = this.books.filter(book => book.title !== title);
+    static removeBook(title) {
+        Library.books = Library.books.filter(book => book.title !== title);
+        delete window.bookInstances?.[title];
+
+        Library.renderBookCards();
+    }
+
+    /**
+     *
+     * @param {Array} filteredBooks - vyfiltrovvane knihy ktere chceme zobrazit
+     */
+    static displayBooks(filteredBooks = null) {
+        const booksToDisplay = filteredBooks || Library.books;
+        console.clear();
+        console.log("Knihy v knihovně:");
+
+        booksToDisplay.forEach(book => {
+            console.log(`${book.title} (${book.year}) – ${book.author}, dostupnost: ${book.isAvailable ? "ano" : "ne"}`);
+        });
+    }
+
+    static renderBookCards(filteredBooks = null) {
+        const booksToRender = filteredBooks || Library.books;
+
+        const container = document.getElementById("cardContainer");
+        container.innerHTML = "";
+
+        booksToRender.forEach(book => {
+            const card = document.createElement("div");
+            card.className = "card m-2";
+            card.style.width = "18rem";
+
+            card.innerHTML = `
+            <div class="card-body">
+                <h5 class="card-title">${book.title}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">${book.author}</h6>
+                <p class="card-text">Vydáno: ${book.year}<br>Dostupná: ${book.isAvailable ? "Ano" : "Ne"}</p>
+                <a href="${book.pdfLink}" class="card-link" target="_blank">📄 Otevřít PDF</a><br>
+                <button class="btn btn-danger mt-2 removeBookBtn" data-title="${book.title}">Smazat</button>
+            </div>
+        `;
+
+            container.appendChild(card);
+        });
+
+        document.querySelectorAll(".removeBookBtn").forEach(btn => {
+            btn.addEventListener("click", e => {
+                const title = e.target.getAttribute("data-title");
+                if (confirm(`Opravdu chceš smazat knihu "${title}"?`)) {
+                    Library.removeBook(title);
+                }
+            });
+        });
     }
 
     static initModal() {
         Library.modal();
-        Library.bookAddition();
         Library.dragBook();
+    }
+    static resetForm() {
+        document.getElementById("title").value = "";
+        document.getElementById("author").value = "";
+        document.getElementById("year").value = "";
+        document.getElementById("isAvailable").checked = false;
+
+        const pdfLink = document.getElementById("pdf-link");
+        pdfLink.href = "";
+        pdfLink.textContent = "";
+        pdfLink.style.display = "none";
+    }
+
+    static enableSearch() {
+        const searchInput = document.getElementById("searchInput");
+
+        searchInput.addEventListener("input", () => {
+            const query = searchInput.value.toLowerCase();
+
+            if (query === "") {
+                Library.renderBookCards(); // zobrazit vše
+                return;
+            }
+
+            const filtered = Library.books.filter(book =>
+                book.title.toLowerCase().includes(query) ||
+                book.author.toLowerCase().includes(query)
+            );
+
+            Library.renderBookCards(filtered); // zobrazit jen filtrování
+        });
     }
 
     static modal() {
@@ -31,35 +128,39 @@ class Library {
         });
     }
 
-    static bookAddition() {
-        const addBookBtn = document.getElementById("addCard");
-        const titleInput = document.getElementById("title");
-        const yearInput = document.getElementById("year");
-        const pdfLink = document.getElementById("pdf-link");
+    static bookAddition(pdfLinkElement) {
+        const addBookBtn = document.getElementById("addBook");
 
         addBookBtn.addEventListener("click", () => {
-            const title = titleInput.value;
-            const year = yearInput.value;
-            const pdfUrl = pdfLink.href;
+            const title = document.getElementById("title").value.trim();
+            const year = document.getElementById("year").value.trim();
+            const author = document.getElementById("author").value.trim();
+            const isAvailable = document.getElementById("isAvailable").checked;
+            const pdfUrl = pdfLinkElement.href;
 
-            if (title && pdfUrl && pdfUrl !== "#") {
-                const book = new Book(title, "Autor není zadán", year, pdfUrl);
-                library.addBook(book);
+            if (title !== "" && author !== "" && year !== "" && !isNaN(new Date(year).getTime()) && pdfUrl !== "") {
+                const book = new Book(title, author, year, pdfUrl, isAvailable);
+                Library.addBook(book);
                 Library.displayBooks();
-                titleInput.value = "";
-                pdfLink.href = "#";
-                pdfLink.style.display = "none";
-                pdfLink.textContent = "";
+
+                alert("Kniha byla úspěšně přidána.");
+                document.getElementById("bookFormMain").style.display = "none";
+                Library.resetForm();
             } else {
-                alert("Vyplň název a přetáhni PDF.");
+                alert("Vyplň všechna pole a přetáhni platný PDF soubor.");
             }
         });
+
+        const resetBtn = document.getElementById("resetForm");
+        resetBtn.addEventListener("click", () => {
+            Library.resetForm();
+        });
     }
+
     static dragBook() {
         const dropzone = document.getElementById('dropzone');
         const pdfLink = document.getElementById('pdf-link');
 
-        // Zabránění výchozímu chování na celé stránce
         document.addEventListener("dragover", e => e.preventDefault());
         document.addEventListener("drop", e => e.preventDefault());
 
@@ -85,10 +186,13 @@ class Library {
                 pdfLink.textContent = `📄 Otevřít knihu`;
                 pdfLink.style.display = 'block';
             } else {
+                pdfLink.href = "";
+                pdfLink.textContent = "";
                 pdfLink.style.display = 'none';
                 alert('Prosím přetáhni pouze PDF soubor.');
             }
         });
-    }
 
+        Library.bookAddition(pdfLink);
+    }
 }

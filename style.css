@@ -33,15 +33,25 @@
     border-radius: 10px;
     font-family: sans-serif;
     transition: background-color 0.3s;
-    margin: 20px;
+
 }
 
 #dropzone.hover {
-    background-color: #eef;
+    border: 2px dashed #198754;
+    background-color: #e9ffe9;
 }
 
 #pdf-link {
     margin-top: 20px;
     display: block;
     font-size: 16px;
+}
+
+.searchBar {
+    max-width: 30%;
+}
+
+.dropzone-error {
+    border: 2px dashed #dc3545 !important;
+    background-color: #ffecec !important;
 }
